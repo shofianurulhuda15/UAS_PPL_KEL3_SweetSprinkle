@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SweetSprinkle</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif;
+            background-color: #FDF2F8;
+        }
+        h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, label, li {
+            font-family: 'Poppins', sans-serif;
+        }
+        .brand-title {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .message {
+            animation: fadeOut 5s forwards;
+            animation-delay: 3s;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .mobile-menu {
+            display: none;
+            transition: all 0.3s ease;
+        }
+        .mobile-menu.show {
+            display: block;
+        }
+        @media (max-width: 1023px) {
+            .desktop-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-pink-50 min-h-screen">
+    <nav class="bg-gradient-to-r from-pink-500 to-pink-400 p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto">
+            <!-- Desktop Navigation -->
+            <div class="flex justify-between items-center">
+                <a href="{% url 'home' %}" class="text-white text-3xl brand-title flex items-center">
+                    <i class="fas fa-cookie-bite mr-2"></i>
+                    <span>SweetSprinkle</span>
+                </a>
+                
+                <!-- Mobile menu button -->
+                <button id="menu-toggle" class="lg:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="hidden lg:flex lg:items-center lg:space-x-1">
+                    <a href="{% url 'home' %}" class="nav-link text-white {% if request.path == '/' %}bg-white/20{% endif %}">
+                        <i class="fas fa-home mr-1"></i> Home
+                    </a>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'add_recipe' %}" class="nav-link text-white {% if request.path == '/recipes/add/' %}bg-white/20{% endif %}">
+                            <i class="fas fa-plus mr-1"></i> Add Recipe
+                        </a>
+                        <a href="{% url 'my_recipes' %}" class="nav-link text-white {% if request.path == '/recipes/my-recipes/' %}bg-white/20{% endif %}">
+                            <i class="fas fa-book mr-1"></i> My Recipes
+                        </a>
+                        <a href="{% url 'favorites' %}" class="nav-link text-white {% if request.path == '/recipes/favorites/' %}bg-white/20{% endif %}">
+                            <i class="fas fa-heart mr-1"></i> Favorites
+                        </a>
+                        <a href="{% url 'profile' %}" class="nav-link text-white {% if request.path == '/accounts/profile/' %}bg-white/20{% endif %}">
+                            <i class="fas fa-user mr-1"></i> Profile
+                        </a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'manage_recipes' %}" class="nav-link text-white {% if request.path == '/recipes/manage/' %}bg-white/20{% endif %}">
+                                <i class="fas fa-tasks mr-1"></i> Manage
+                            </a>
+                            <a href="{% url 'admin:index' %}" class="nav-link text-white">
+                                <i class="fas fa-user-shield mr-1"></i> Admin
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'logout' %}" class="nav-link text-white">
+                            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="nav-link text-white">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Login
+                        </a>
+                        <a href="{% url 'register' %}" class="nav-link bg-white text-pink-500 font-medium rounded-md shadow-sm hover:bg-gray-50 hover:text-pink-600 transition-all ml-2">
+                            <i class="fas fa-user-plus mr-1"></i> Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation Menu -->
+            <div id="mobile-menu" class="mobile-menu mt-4 bg-white rounded-lg shadow-lg overflow-hidden">
+                <a href="{% url 'home' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50 {% if request.path == '/' %}bg-pink-100 text-pink-600{% endif %}">
+                    <i class="fas fa-home mr-2"></i> Home
+                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_recipe' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50 {% if request.path == '/recipes/add/' %}bg-pink-100 text-pink-600{% endif %}">
+                        <i class="fas fa-plus mr-2"></i> Add Recipe
+                    </a>
+                    <a href="{% url 'my_recipes' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50 {% if request.path == '/recipes/my-recipes/' %}bg-pink-100 text-pink-600{% endif %}">
+                        <i class="fas fa-book mr-2"></i> My Recipes
+                    </a>
+                    <a href="{% url 'favorites' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50 {% if request.path == '/recipes/favorites/' %}bg-pink-100 text-pink-600{% endif %}">
+                        <i class="fas fa-heart mr-2"></i> Favorites
+                    </a>
+                    <a href="{% url 'profile' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50 {% if request.path == '/accounts/profile/' %}bg-pink-100 text-pink-600{% endif %}">
+                        <i class="fas fa-user mr-2"></i> Profile
+                    </a>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'manage_recipes' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50 {% if request.path == '/recipes/manage/' %}bg-pink-100 text-pink-600{% endif %}">
+                            <i class="fas fa-tasks mr-2"></i> Manage Recipes
+                        </a>
+                        <a href="{% url 'admin:index' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50">
+                            <i class="fas fa-user-shield mr-2"></i> Admin Panel
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}" class="block px-4 py-3 text-gray-800 font-medium hover:bg-pink-50">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="block px-4 py-3 border-b border-gray-100 text-gray-800 font-medium hover:bg-pink-50">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login
+                    </a>
+                    <a href="{% url 'register' %}" class="block px-4 py-3 text-gray-800 font-medium hover:bg-pink-50">
+                        <i class="fas fa-user-plus mr-2"></i> Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="message bg-white border-l-4 border-pink-500 text-pink-800 p-4 rounded-md shadow-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-info-circle mr-3 text-pink-500"></i>
+                            <p>{{ message }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer class="bg-white py-6 mt-12 border-t border-pink-100">
+        <div class="container mx-auto text-center text-gray-600">
+            <p>&copy; {% now "Y" %} SweetSprinkle. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-pink-400 hover:text-pink-500"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-pink-400 hover:text-pink-500"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-pink-400 hover:text-pink-500"><i class="fab fa-pinterest-p"></i></a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
