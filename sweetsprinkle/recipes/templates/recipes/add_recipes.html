@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1 class="text-3xl text-pink-600 mb-4">Add New Recipe</h1>
+    <form method="post" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-pink-400 text-white p-2 rounded hover:bg-pink-500">Submit Recipe</button>
+    </form>
+{% endblock %}

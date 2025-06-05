@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
+    <div class="text-center mb-8">
+        <i class="fas fa-utensils text-pink-500 text-4xl mb-3"></i>
+        <h2 class="text-3xl font-semibold text-gray-800">Add New Recipe</h2>
+        <p class="text-gray-600 mt-1">Share your delicious recipe with the SweetSprinkle community</p>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="mb-6">
+            <label for="{{ form.name.id_for_label }}" class="block text-gray-700 font-medium mb-2">{{ form.name.label }}</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="text-red-500 text-sm mt-1">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-6">
+            <label for="{{ form.categories.id_for_label }}" class="block text-gray-700 font-medium mb-2">{{ form.categories.label }}</label>
+            <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {% for checkbox in form.categories %}
+                        <div class="flex items-center">
+                            {{ checkbox.tag }}
+                            <label for="{{ checkbox.id_for_label }}" class="ml-2 text-gray-700">
+                                {{ checkbox.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% if form.categories.help_text %}
+                <p class="text-gray-500 text-sm mt-1">{{ form.categories.help_text }}</p>
+            {% endif %}
+            {% if form.categories.errors %}
+                <div class="text-red-500 text-sm mt-1">{{ form.categories.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-6">
+            <label for="{{ form.ingredients.id_for_label }}" class="block text-gray-700 font-medium mb-2">{{ form.ingredients.label }}</label>
+            {{ form.ingredients }}
+            {% if form.ingredients.help_text %}
+                <p class="text-gray-500 text-sm mt-1">{{ form.ingredients.help_text }}</p>
+            {% endif %}
+            {% if form.ingredients.errors %}
+                <div class="text-red-500 text-sm mt-1">{{ form.ingredients.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-6">
+            <label for="{{ form.steps.id_for_label }}" class="block text-gray-700 font-medium mb-2">{{ form.steps.label }}</label>
+            {{ form.steps }}
+            {% if form.steps.help_text %}
+                <p class="text-gray-500 text-sm mt-1">{{ form.steps.help_text }}</p>
+            {% endif %}
+            {% if form.steps.errors %}
+                <div class="text-red-500 text-sm mt-1">{{ form.steps.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-6">
+            <label for="{{ form.image.id_for_label }}" class="block text-gray-700 font-medium mb-2">{{ form.image.label }}</label>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <label for="recipe-image" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer">
+                        <i class="fas fa-camera mr-2 text-pink-500"></i>
+                        <span>Choose Photo</span>
+                    </label>
+                    {{ form.image }}
+                </div>
+                <div id="file-name" class="text-gray-500 text-sm">No file selected</div>
+            </div>
+            <div id="image-preview-container" class="mt-4 hidden">
+                <img id="image-preview" class="h-40 object-cover rounded-md" src="#" alt="Recipe preview">
+                <button type="button" id="remove-image" class="mt-2 text-sm text-red-500 hover:text-red-700">
+                    <i class="fas fa-times mr-1"></i> Remove image
+                </button>
+            </div>
+            {% if form.image.help_text %}
+                <p class="text-gray-500 text-sm mt-1">{{ form.image.help_text }}</p>
+            {% endif %}
+            {% if form.image.errors %}
+                <div class="text-red-500 text-sm mt-1">{{ form.image.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="border-t border-gray-200 pt-6">
+            <div class="flex items-center">
+                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                <p class="text-sm text-gray-600">
+                    {% if user.is_superuser %}
+                        Your recipe will be published immediately.
+                    {% else %}
+                        Your recipe will be reviewed by our team before being published.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-pink-400 text-white py-3 px-4 rounded-md hover:opacity-90 transition duration-200 font-medium shadow-md">
+                <i class="fas fa-paper-plane mr-2"></i> Submit Recipe
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('recipe-image');
+        const fileNameDisplay = document.getElementById('file-name');
+        const imagePreview = document.getElementById('image-preview');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const removeImageBtn = document.getElementById('remove-image');
+        
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                const fileName = fileInput.files[0].name;
+                fileNameDisplay.textContent = fileName;
+                
+                // Show image preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                fileNameDisplay.textContent = 'No file selected';
+                imagePreviewContainer.classList.add('hidden');
+            }
+        });
+        
+        removeImageBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            fileNameDisplay.textContent = 'No file selected';
+            imagePreviewContainer.classList.add('hidden');
+        });
+    });
+</script>
+{% endblock %} 

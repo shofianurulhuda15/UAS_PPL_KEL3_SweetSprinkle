@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-8">
+    <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">Your Profile</h2>
+    
+    <div class="bg-gradient-to-r from-pink-100 to-pink-50 p-6 rounded-lg mb-8 shadow-sm border border-pink-200">
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+            <div class="bg-gradient-to-r from-pink-500 to-pink-400 text-white rounded-full w-24 h-24 flex items-center justify-center text-4xl font-bold shadow-md flex-shrink-0">
+                {{ user.username|first|upper }}
+            </div>
+            <div class="text-center md:text-left">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-1">{{ user.username }}</h3>
+                <p class="text-gray-600 mb-3 flex items-center justify-center md:justify-start">
+                    <i class="far fa-calendar-alt mr-2 text-pink-400"></i>
+                    Member since: <span class="ml-1 font-medium">{{ user.date_joined|date:"F j, Y" }}</span>
+                </p>
+                <div class="flex space-x-2 justify-center md:justify-start">
+                    <span class="bg-pink-500 text-white text-xs px-3 py-1 rounded-full">
+                        <i class="fas fa-cookie mr-1"></i> Baker
+                    </span>
+                    {% if user.is_superuser %}
+                    <span class="bg-purple-500 text-white text-xs px-3 py-1 rounded-full">
+                        <i class="fas fa-star mr-1"></i> Admin
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 transition-all hover:shadow-md">
+            <div class="flex items-center mb-4">
+                <div class="bg-pink-400 p-2 rounded-lg mr-3">
+                    <i class="fas fa-cog text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800">Account Settings</h3>
+            </div>
+            <ul class="space-y-3">
+                <li>
+                    <a href="{% url 'password_change' %}" class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-pink-50 text-gray-700 hover:text-pink-600 transition-all">
+                        <i class="fas fa-key mr-3 text-pink-500"></i> 
+                        <span>Change Password</span>
+                        <i class="fas fa-chevron-right ml-auto text-gray-400"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 transition-all hover:shadow-md">
+            <div class="flex items-center mb-4">
+                <div class="bg-pink-400 p-2 rounded-lg mr-3">
+                    <i class="fas fa-chart-bar text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800">Your Activity</h3>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center p-3 rounded-lg bg-gray-50">
+                    <i class="fas fa-heart mr-3 text-pink-500"></i>
+                    <span class="text-gray-700">Favorites</span>
+                    <span class="ml-auto bg-pink-500 text-white text-sm px-2.5 py-0.5 rounded-full">{{ user.favoriterecipe_set.count }}</span>
+                </div>
+                <div class="flex items-center p-3 rounded-lg bg-gray-50">
+                    <i class="fas fa-utensils mr-3 text-pink-500"></i>
+                    <span class="text-gray-700">Your Recipes</span>
+                    <span class="ml-auto bg-pink-500 text-white text-sm px-2.5 py-0.5 rounded-full">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
